@@ -1,0 +1,14 @@
+{
+  "name": "justin-vs-dinosaurs",
+  "version": "1.0.0",
+  "description": "A real time multiplayer game written in node.js with socket.io",
+  "author": "Tyler Brown tylerbrowncs.com",
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/tmb4qf/JustinVsDinosaurs"
+},
+  "dependencies": {
+    "express": "4.13.3",
+    "socket.io": "1.3.7"
+  }
+}

@@ -1,0 +1,113 @@
+body{
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	background-color: #5A1D0E;
+}
+
+#menu{
+	margin: 0px auto;
+}
+
+#header{
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.button{
+	margin: 5px;
+	float: left;
+}
+
+#nameBox{
+	font-family: monospace;
+	font-size: 250%;
+	font-weight: bold;
+	color: #A36D48;
+}
+
+.input{
+	border-radius: 5px;
+	font-size: 100%;
+	background-color: #FFFFFF;
+	color: #000000;
+	margin-bottom: 10px;
+}
+
+#hostButton{
+	font-size: 250%;
+	background-color: #A36D48;
+	padding: 5px;
+	color: #45160A;
+	display: inline;
+	border-radius: 5px;
+	border: none;
+	margin-left: 20px;
+	box-shadow: 3px 3px 1px #45160A;
+}
+
+#hostButton:hover{
+	background-color: #A88A76;
+}
+
+#startGameButton{
+	font-size: 120%;
+	text-align: center;
+	background-color: #A36D48;
+	padding: 5px;
+	color: #45160A;
+	border-radius: 5px;
+	border: none;
+	box-shadow: 3px 3px 1px #45160A;
+}
+
+#startGameButton:hover{
+	background-color: #A88A76;
+}
+
+#playerList{
+	font-weight: bold;
+	font-size: 200%;
+}
+.heading{
+	font-size: 130%;
+	font-weight: bold;
+	margin: 0;
+}
+
+.panel{
+	text-align: center;
+	color: white;
+	font-size: 150%;
+	font-family: monospace;
+	width: 40%;
+	height: 90%;
+	margin: 20px;
+	float: left;
+	background-color: #78615B;
+	border-radius: 10px;
+	box-shadow: 15px 15px 7px #45160A;
+}
+
+.bold{
+	font-weight: 900;
+	font-size: 110%;
+}
+
+ul{
+    list-style-type: none;
+}
+
+.error{
+	font-family: monospace;
+	font-family: 120%;
+	color: red;
+}
+
+.huge{
+	font-size: 100px;
+	text-align: center;
+	color: white;
+	font-family: monospace;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Justin vs. Dinosaurs</title>
+		<link href="css/style.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.20/p5.js"></script>
+		<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+		<script src="/js/client.js"></script>
+	</head>
+	<body>
+		<img src="images/header.png" id="header"></img>
+		<div id="menu">
+			<div class="button" id="rButton">
+				<img src="images/TRICERATOPS_LEFT.png" class="buttonImg" id="rImg"></img>
+			</div>
+			<div class="button" id="mButton">
+				<img src="images/PTERODACTYL.png" class="buttonImg" id="mImg"></img>
+			</div>
+			<div class="button" id="lButton">
+				<img src="images/TRICERATOPS_RIGHT.png" class="buttonImg" id="lImg"></img>
+			</div>
+		</div>
+	</body>
+	<script>
+		var menu = $('#menu');
+		$('.button').hide();
+		$('#header').hide();
+		
+		$(function(){
+			var width = window.innerWidth / 3.5;
+			$('.button').width(width).height(width * .56);
+			$('.buttonImg').width(width).height(width * .56);
+			
+			var totalWidth = $('#rButton').width() + $('#mButton').width() + $('#lButton').width() + 30;
+			menu.width(totalWidth);
+			
+			$('#header').fadeIn(500, function(){
+				$('.button').show(1000);
+			});
+			
+			$('#rButton').hover(function(){
+				$('#rImg').attr('src', 'images/TRICERATOPS_LEFT_HOVER.png');
+			}, function(){
+				$('#rImg').attr('src', 'images/TRICERATOPS_LEFT.png');
+			});
+			
+			$('#mButton').hover(function(){
+				$('#mImg').attr('src', 'images/PTERODACTYL_HOVER.png');
+			}, function(){
+				$('#mImg').attr('src', 'images/PTERODACTYL.png');
+			});
+			
+			$('#lButton').hover(function(){
+				$('#lImg').attr('src', 'images/TRICERATOPS_RIGHT_HOVER.png');
+			}, function(){
+				$('#lImg').attr('src', 'images/TRICERATOPS_RIGHT.png');
+			});
+			
+			$('#rButton').click(function(){
+				$('.button').hide(400, function(){
+					var newHtml = '<span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name"></input></span>';
+					newHtml += '<button id="hostButton" onclick="host()">Host</button>';
+					menu.html(newHtml);
+					menu.width($('#nameBox').width() + $('#hostButton').width() + 40);
+				});
+			});
+			$('#mButton').click(function(){
+			
+			});
+			$('#lButton').click(function(){
+				$('.button').hide(400, function(){
+					var newHtml = '<span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name"></input><br/><input class="input" type="text" id="key" size=7 maxlength=5 autocomplete="off" placeholder="Game Key"></input></span>';
+					newHtml += '<button id="hostButton" onclick="join()">Join</button>';
+					menu.html(newHtml);
+					menu.width($('#nameBox').width() + $('#hostButton').width() + 40);
+				});
+			});
+		});
+	</script>
+</html>
