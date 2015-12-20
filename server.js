@@ -4,6 +4,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 var core = require('./js/game.js');
 var constant = core.constants;
+var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4};
 
 server.listen(8080, function(){
 	console.log("Let's Go!");
@@ -61,45 +62,64 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('join', function(name, key){
-		var keyFound = false;
-		for(var i = 0; i < games.length; i++){
-			if(games[i].key == key){
-				var game = games[i];
-				var color = game.getColor();
-				
-				var newPlayer = new Player(socket.id, key, game.players.length, name, color);
-				game.players.push(newPlayer);
-				
-				var newGoodGuy = core.GoodGuy(color);
-				game.goodGuys.push(newGoodGuy);
-				
-				socket.join(key);
-				io.to(socket.id).emit('joined', newPlayer, false);
-				io.to(key).emit('playerList', key, game.players);
-				
-				keyFound = true;
-				break;
-			}
+		var game = findGame(key);
+		if(game){
+			var game = games[i];
+			var color = game.getColor();
+			
+			var newPlayer = new Player(socket.id, key, game.players.length, name, color);
+			game.players.push(newPlayer);
+			
+			var newGoodGuy = core.GoodGuy(color);
+			game.goodGuys.push(newGoodGuy);
+			
+			socket.join(key);
+			io.to(socket.id).emit('joined', newPlayer, false);
+			io.to(key).emit('playerList', key, game.players);
 		}
-		
-		if(!keyFound){
+		else{
 			io.to(socket.id).emit('invalidKey');
 		}
 	});
 	
 	socket.on('startGame', function(key){
-		for(var i = 0; i < games.length; i++){
-			if(games[i].key == key){
-				var game = games[i];
-				io.to(key).emit('countdown', 5);
+		var game = findGame(key);
+		if(game){
+			io.to(key).emit('countdown', 5);
+			setTimeout(function(){
+				inPlayGames.push(game);
+			}, 5500);
+			
+			var len = game.goodGuys.length;
+			var position = [0,-1,1,-2,2];
+			var rowCount = 0;
+			var columnCount = 0;
+			
+			for(var i = 0; i < len; i++){
+				game.goodGuys[i].x = constant.width / 2 + position[columnCount++] * 100;
+				game.goodGuys[i].y = constant.height / 2 + position[rowCount++] * 100;
 				
-				setTimeout(function(){
-					inPlayGames.push(game);
-				}, 5000);
-				
-				break;
+				if(columnCount == position.length)
+					columnCount = 0;
+				if(rowCount == position.length)
+					rowCount = 0;
 			}
-		}			
+		}
+	});
+	
+	socket.on('keyPress', function(dir, gameID, index){
+		var game = findInPlayGame(gameID);
+		if(game){
+			game.goodGuys[index].dir = dir;
+		}
+	});
+	
+	socket.on('bullet', function(dir, gameID, index){
+		var game = findInPlayGame(gameID);
+		if(game && game.goodGuys[index].alive == true){
+			var bullet = new core.Bullet(game.goodGuys[index].x, game.goodGuys[index].y, dir);
+			game.bullets.push(bullet);
+		}
 	});
 });
 
@@ -110,6 +130,26 @@ var gameLoop = setInterval(function(){
 		io.to(inPlayGames[i].key).emit('frame');
 	}
 }, 1000/constant.frameRate);
+
+function findGame(gameID){
+	var len = games.length;
+	for(var i = 0; i < len; i++){
+		if(gameID == games[i].key);
+			return games[i];
+	}
+	
+	return false;
+}
+
+function findInPlayGame(gameID){
+	var len = inPlayGames.length;
+	for(var i = 0; i < len; i++){
+		if(gameID == inPlayGames[i].key);
+			return inPlayGames[i];
+	}
+	
+	return false;
+}
 
 function generateKey(){
 	var key = '';

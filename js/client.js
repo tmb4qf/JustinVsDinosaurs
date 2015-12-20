@@ -1,6 +1,26 @@
 var socket = io();
 var myPlayer;
 
+var canvasWidth;
+var canvasHeight;
+var scaleWidth;
+var scaleHeight;
+var canvas;
+var ctx;
+
+var constant = {
+	frameRate : 30,
+	goodGuySize: 30,
+	badGuySize: 15,
+	bulletSize: 10,
+	badGuyColor: '#FF3B3B',
+	bulletColor: '#F2F2F2',
+	width: 1200,
+	height: 700
+};
+
+var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4};
+
 function Player(name){
 	this.host;
 	this.socketID = socketID;
@@ -53,6 +73,18 @@ function startGame(){
 	}
 }
 
+function setupCanvas(){
+	cavansWidth = window.innerWidth;
+	canvasHeight = window.innerHeight;
+	scaleWidth = canvasWidth / constant.width;
+	scaleHeight = canvasHeight / constant.height;
+	
+	$('body').html('<canvas id="canvas" width="'+ canvasWidth +'" height="'+ canvasHeight+'"></canvas>');
+	
+	canvas = document.getElementById('canvas');
+	ctx = canvas.getContext("2d");
+}
+
 socket.on('countdown', function(timer){
 	$('#header').animate({opacity: 0}, 500);
 	menu.height(window.innerHeight);
@@ -60,10 +92,7 @@ socket.on('countdown', function(timer){
 	var clock = setInterval(function(){
 		if(timer == 0){
 			clearInterval(clock);
-			menu.html('<div class="huge">Go!</div>').fadeIn(200, function(){
-				menu.remove();
-				$('#header').remove();
-			}).remove();
+			setupCanvas();
 		}
 		else
 			menu.html('<div class="huge">' + timer-- + '</div>').fadeIn(200);
@@ -71,5 +100,26 @@ socket.on('countdown', function(timer){
 });
 
 socket.on('frame', function(){
-	console.log("Frame");
-})
+	//draw game
+});
+
+$(document).keydown(function(e){
+	if(myPlayer){
+		if(e.which == 87)
+			socket.emit('bullet', dir.UP, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 65)
+			socket.emit('bullet', dir.LEFT, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 83)
+			socket.emit('bullet', dir.DOWN, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 68)
+			socket.emit('bullet', dir.RIGHT, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 37)
+			socket.emit('keyPress', dir.LEFT, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 38)
+			socket.emit('keyPress', dir.UP, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 39)
+			socket.emit('keyPress', dir.RIGHT, myPlayer.gameID, myPlayer.index);
+		else if(e.which == 40)
+			socket.emit('keyPress', dir.DOWN, myPlayer.gameID, myPlayer.index);
+	}
+});

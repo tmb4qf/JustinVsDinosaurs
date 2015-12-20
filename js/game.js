@@ -1,10 +1,8 @@
-var consts = {
+var constant = {
 	frameRate : 30,
 	goodGuySpeed : 5 * (1 / this.frameRate),
 	badGuySpeed : 3 * (1 / this.frameRate),
 	bulletSpeed : 15 * (1 / this.frameRate),
-	badGuyColor : '#FF3B3B',
-	bulletColor : '#F2F2F2',
 	width: 1200,
 	height: 700
 };
@@ -23,7 +21,7 @@ function Game(key)
 	this.colorID = 0;
 	this.colors = ['#0000CC', '#FF0000', '#FFFF00', '#00CC00', '#FF9900', '#FFFFFF', '#CC00FF', '#00FFFF', '#FF6699', '#6200FF'];
 	
-	this.createBadGuys(5);
+	//this.createBadGuys(5);
 }
 
 Game.prototype.getColor = function(){
@@ -37,14 +35,11 @@ Game.prototype.getColor = function(){
 
 Game.prototype.checkDeath = function()
 {
-	var len1 = this.goodGuys.length;
-	for(var i=0; i<len1; i++)
-	{
-		if(this.goodGuys[i].alive)
-		{
-			var len2 = this.badGuys.length;
-			for(var j = 0; j < len2; j++)
-			{
+	var goodGuyLen = this.goodGuys.length;
+	for(var i=0; i<goodGuyLen; i++){
+		if(this.goodGuys[i].alive){
+			var badGuyLen = this.badGuys.length;
+			for(var j = 0; j < badGuyLen; j++){
 				if(Math.abs(this.badGuys[j].x - this.goodGuys[i].x) < 15 && Math.abs(this.badGuys[j].y - this.goodGuys[i].y) < 15)
 				{
 					this.goodGuys[j].alive = false;
@@ -57,34 +52,32 @@ Game.prototype.checkDeath = function()
 	
 	if(this.numAlive == 0)
 	{
-		socket.emit('gameOver');
+		//socket.emit('gameOver');
 	}
 }
 
 Game.prototype.createBadGuys = function(num)
 {
-	for(var i=0; i<num; i++)
-	{
+	for(var i=0; i<num; i++){
 		var rand = Math.floor(Math.random() * 4);
 		var x, y;
 		
-		switch (rand)
-		{
+		switch (rand){
 			case 0:
 				x = 0;
-				y = Math.random() * consts.height;
+				y = Math.random() * constant.height;
 				break;
 			case 1:
-				x = consts.width;
-				y = Math.random() * consts.height;
+				x = constant.width;
+				y = Math.random() * constant.height;
 				break;
 			case 2:
-				x = Math.random() * consts.width;
+				x = Math.random() * constant.width;
 				y = 0;
 				break;
 			case 3:
-				x = Math.random() * consts.width;
-				y = consts.height;
+				x = Math.random() * constant.width;
+				y = constant.height;
 				break;
 		}
 		
@@ -105,14 +98,15 @@ Game.prototype.updateGoodGuys = function()
 	var len = this.goodGuys.length;
 	for(var i = 0; i < len; i++)
 	{
-		if(this.dir == dir.LEFT && validMove(this, dir.LEFT))
-			this.x -= consts.goodGuySpeed;
-		else if(this.dir == dir.RIGHT && validMove(this, dir.RIGHT))
-			this.x += consts.goodGuySpeed;
-		else if(this.dir == dir.UP && validMove(this, dir.UP))
-			this.y -= consts.goodGuySpeed;
-		else if(this.dir == dir.DOWN && validMove(this, dir.DOWN))
-			this.y += consts.goodGuySpeed;
+		var goodGuy = this.goodGuy[i];
+		if(goodGuy.dir == dir.LEFT && validMove(goodGuy, dir.LEFT))
+			goodGuy.x -= constant.goodGuySpeed;
+		else if(goodGuy.dir == dir.RIGHT && validMove(goodGuy, dir.RIGHT))
+			goodGuy.x += constant.goodGuySpeed;
+		else if(goodGuy.dir == dir.UP && validMove(goodGuy, dir.UP))
+			goodGuy.y -= constant.goodGuySpeed;
+		else if(goodGuy.dir == dir.DOWN && validMove(goodGuy, dir.DOWN))
+			goodGuy.y += constant.goodGuySpeed;
 	}
 }
 
@@ -121,8 +115,7 @@ Game.prototype.updateBadGuys = function()
 	var len = this.badGuys.length;
 	for(var i = 0; i < len; i++)
 	{
-		if(Math.random() > .5)
-		{
+			var badGuy = this.badGuys[i];
 			var min;
 			var index = -1;
 			for(var j = 0; j < this.goodGuys.length; j++)
@@ -139,19 +132,23 @@ Game.prototype.updateBadGuys = function()
 				}
 			}
 			
-			var goodX = this.goodGuys[index].x;
-			var goodY = this.goodGuys[index].y;
+			var goodGuy = this.goodGuys[index];
+			var deltaX = Math.abs(goodGuy.x - badGuy.x);
 			var rand = Math.random();
 			
-			if(rand > .5 && this.x < goodX)
-				this.x += consts.badGuySpeed;
-			else if(rand > .5)
-				this.x -= consts.badGuySpeed;
-			else if(this.y < goodY)
-				this.y += consts.badGuySpeed;
-			else
-				this.y -= consts.badGuySpeed;
-		}
+			if(deltaX < 5 || rand > .5){
+				if(badGuy.y < goodGuy.y)
+					badGuy.y += constant.badGuySpeed;
+				else
+					badGuy.y -= constant.badGuySpeed;
+			}
+			else{
+				if(badGuy.x < goodGuy.x)
+					badGuy.x += constant.badGuySpeed;
+				else
+					badGuy.x -= constant.badGuySpeed;
+			}
+			
 	}
 }
 
@@ -160,8 +157,9 @@ Game.prototype.updateBullets = function()
 	var len = this.bullets.length;
 	for(var i = 0; i < len; i++)
 	{
-		this.bullets[i].move();
-		if(this.bullets[i].x < 0 || this.bullets[i].x > consts.width || this.bullets[i].y < 0 || this.bullets[i].y > consts.height)
+		var bullet = this.bullets[i];
+		bullet.move();
+		if(bullet.x < 0 || bullet.x > constant.width || bullet.y < 0 || bullet.y > constant.height)
 		{
 			this.bullets.splice(i,1);
 			len--;
@@ -172,7 +170,7 @@ Game.prototype.updateBullets = function()
 		for(var j=0; j<len2; j++)
 		{
 			var badGuy = this.badGuys[j];
-			if(Math.abs(x - badGuy.x) < 10 && Math.abs(y - badGuy.y) < 10)
+			if(Math.abs(bullet.x - badGuy.x) < 10 && Math.abs(bullet.y - badGuy.y) < 10)
 			{
 				this.badGuys.splice(j,1);
 				len2--;
@@ -186,7 +184,6 @@ function GoodGuy(color)
 {
 	this.x;
 	this.y;
-	this.speed = consts.goodGuySpeed;
 	this.dir;
 	this.color = color;
 	this.alive = true;
@@ -196,28 +193,44 @@ function BadGuy(x,y)
 {
 	this.x = x;
 	this.y = y;
-	this.speed = consts.badGuySpeed;
 }
 
-function Bullet()
+function Bullet(x,y,dir)
 {
 	this.x = x;
 	this.y = y;
-	this.speed = consts.bulletSpeed;
+	this.dir = dir;
 }
 
-function validMove(person, dir)
+Bullet.prototype.move = function(){
+	switch(this.dir){
+		case dir.LEFT:
+			this.x -+ constant.bulletSpeed;
+			break;
+		case dir.RIGHT:
+			this.x += constant.bulletSpeed;
+			break;
+		case dir.UP:
+			this.y -= constant.bulletSpeed;
+			break;
+		case dir.DOWN:
+			this.y += constant.bulletSpeed;
+			break;
+	}
+}
+
+function validMove(person, direction)
 {
-	if(dir == dir.LEFT && person.x > 25)
+	if(direction == dir.LEFT && person.x > 25)
 		return true;
 	
-	if(dir == dir.RIGHT && person.x < (consts.width - 25))
+	if(direction == dir.RIGHT && person.x < (constant.width - 25))
 		return true;
 	
-	if(dir == dir.UP && person.y > 25)
+	if(direction == dir.UP && person.y > 25)
 		return true;
 	
-	if(dir == dir.DOWN && person.y < (consts.height - 25))
+	if(direction == dir.DOWN && person.y < (constant.height - 25))
 		return true;
 	
 	return false;
@@ -227,4 +240,4 @@ module.exports.Game = Game;
 module.exports.GoodGuy = GoodGuy;
 module.exports.BadGuy = BadGuy;
 module.exports.Bullet = Bullet;
-module.exports.constants = consts;
+module.exports.constants = constant;
