@@ -1,8 +1,8 @@
 var constant = {
 	frameRate : 30,
-	goodGuySpeed : 5 * (1 / this.frameRate),
-	badGuySpeed : 3 * (1 / this.frameRate),
-	bulletSpeed : 15 * (1 / this.frameRate),
+	goodGuySpeed : 5,
+	badGuySpeed : 3,
+	bulletSpeed : 15,
 	width: 1200,
 	height: 700
 };
@@ -11,6 +11,8 @@ var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4};
 
 function Game(key)
 {
+	this.secs = 0;
+	this.framesThisWave = 0;
 	this.key = key;
 	this.players = [];
 	this.badGuys = [];

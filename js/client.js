@@ -99,8 +99,37 @@ socket.on('countdown', function(timer){
 	}, 1000);
 });
 
-socket.on('frame', function(){
-	//draw game
+socket.on('frame', function(goodGuys, badGuys, bullets, secs){
+	var i = 0;
+	
+	context.fillStyle = constant.badGuyColor;
+	context.fill();
+	var badGuyLen = badGuys.length;
+	for(i = 0; i < badGuyLen; i++){
+		context.beginPath();
+		context.arc(badGuys[i].x, badGuys[i].y, constant.badGuySize, 0, 2 * Math.PI);
+		context.stroke();
+	}
+	
+	var goodGuyLen = goodGuys.length;
+	for(i = 0; i < goodGuyLen; i++){
+		if(game.goodGuys[i].alive == true){
+			context.fillStyle = goodGuys[i].color;
+			context.fill();
+			context.beginPath();
+			context.arc(goodGuys[i].x, goodGuys[i].y, constant.goodGuySize, 0, 2 * Math.PI);
+			context.stroke();
+		}
+	}
+	
+	context.fillStyle = constant.bulletColor;
+	context.fill();
+	var bulletLen = bullets.length;
+	for(i = 0; i < bulletLen; i++){
+		context.beginPath();
+		context.arc(bullets[i].x, bullets[i].y, constant.bulletSize, 0, 2 * Math.PI);
+		context.stroke();
+	}
 });
 
 $(document).keydown(function(e){

@@ -126,8 +126,19 @@ io.on('connection', function(socket){
 var gameLoop = setInterval(function(){
 	var len = inPlayGames.length;
 	for(var i = 0; i < len; i++){
-		inPlayGames[i].update();
-		io.to(inPlayGames[i].key).emit('frame');
+		var game = inPlayGames[i].update();
+		game.update();
+		
+		if(game.waveFrames == 300){
+			game.waveFrame = 0;
+			game.createBadGuys(game.secs / 2);
+			game.secs++;
+		}
+		else if(game.waveFrames % 30 == 0){
+			game.secs++
+		}
+		
+		io.to(game.key).emit('frame', game.goodGuys, game.badGuys, game.bullets, game.secs);
 	}
 }, 1000/constant.frameRate);
 
