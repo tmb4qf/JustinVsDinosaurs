@@ -4,7 +4,8 @@ var constant = {
 	badGuySpeed : 3,
 	bulletSpeed : 15,
 	width: 1200,
-	height: 700
+	height: 700,
+	reestablishTargetFrequency: 30
 };
 
 var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4};
@@ -23,7 +24,7 @@ function Game(key)
 	this.colorID = 0;
 	this.colors = ['#0000CC', '#FF0000', '#FFFF00', '#00CC00', '#FF9900', '#FFFFFF', '#CC00FF', '#00FFFF', '#FF6699', '#6200FF'];
 	
-	//this.createBadGuys(5);
+	this.createBadGuys(5);
 }
 
 Game.prototype.getColor = function(){
@@ -117,40 +118,52 @@ Game.prototype.updateBadGuys = function()
 	var len = this.badGuys.length;
 	for(var i = 0; i < len; i++)
 	{
-			var badGuy = this.badGuys[i];
-			var min;
-			var index = -1;
-			for(var j = 0; j < this.goodGuys.length; j++)
+		var badGuy = this.badGuys[i];
+		var goodGuy = this.goodGuys[badGuy.target];
+		
+		var deltaX = Math.abs(goodGuy.x - badGuy.x);
+		var deltaY = Math.abs(goodGuy.y - badGuy.y);
+		var rand = Math.random();
+			
+		if(deltaX < 5 || (rand > .5 && deltaY > 5)){
+			if(badGuy.y < goodGuy.y)
+				badGuy.y += constant.badGuySpeed;
+			else
+				badGuy.y -= constant.badGuySpeed;
+		}
+		else{
+			if(badGuy.x < goodGuy.x)
+				badGuy.x += constant.badGuySpeed;
+			else
+				badGuy.x -= constant.badGuySpeed;
+		}
+		
+	}
+}
+
+Game.prototype.reestablishTargets = function(){
+	var len = this.badGuys.length;
+	for(var i = 0; i < len; i++){
+		var badGuy = this.badGuys[i];
+		var min;
+		var index = -1;
+		
+		for(var j = 0; j < this.goodGuys.length; j++)
+		{
+			var goodGuy = this.goodGuys[j];
+			if(goodGuy.alive == true)
 			{
-				var goodGuy = this.goodGuys[j];
-				if(goodGuy.alive == true)
+				var dist = Math.sqrt(Math.pow(goodGuy.x - badGuy.x, 2) + Math.pow(goodGuy.y - badGuy.y, 2));
+				if(dist < min || index == -1)
 				{
-					var dist = Math.sqrt(Math.pow(goodGuy.x - this.x, 2) + Math.pow(goodGuy.y - this.y, 2));
-					if(dist < min || index == -1)
-					{
-						index = j;
-						min = dist;
-					}
+					index = j;
+					min = dist;
 				}
 			}
-			
-			var goodGuy = this.goodGuys[index];
-			var deltaX = Math.abs(goodGuy.x - badGuy.x);
-			var rand = Math.random();
-			
-			if(deltaX < 5 || rand > .5){
-				if(badGuy.y < goodGuy.y)
-					badGuy.y += constant.badGuySpeed;
-				else
-					badGuy.y -= constant.badGuySpeed;
-			}
-			else{
-				if(badGuy.x < goodGuy.x)
-					badGuy.x += constant.badGuySpeed;
-				else
-					badGuy.x -= constant.badGuySpeed;
-			}
-			
+		}
+		if(index != -1){
+			badGuy.target = index;
+		}
 	}
 }
 
@@ -195,6 +208,7 @@ function BadGuy(x,y)
 {
 	this.x = x;
 	this.y = y;
+	this.target;
 }
 
 function Bullet(x,y,dir)

@@ -73,34 +73,62 @@ function startGame(){
 }
 
 function setupCanvas(){
-	canvasWidth = window.innerWidth;
-	canvasHeight = window.innerHeight;
+	
+	var windowRatio = window.innerWidth / window.innerHeight;
+	var gameRatio = constant.width / constant.height;
+	
+	if(windowRatio < gameRatio){ //use full width
+		canvasWidth = window.innerWidth;
+		canvasHeight = canvasWidth / gameRatio;
+		
+		$('body').html('<canvas id="canvas" width="'+ canvasWidth +'" height="'+ canvasHeight+'"></canvas>').css({'overflow':'hidden', 'background-color': '#FFFFFF'});
+		
+		var extraHeight = window.innerHeight - canvasHeight;
+		
+		$('#canvas').css({'background-color': '#5A1D0E', 'margin-top': extraHeight/2});
+	}
+	else{ //use full height
+		canvasHeight = window.innerHeight;
+		canvasWidth = canvasHeight * gameRatio;
+		
+		$('body').html('<canvas id="canvas" width="'+ canvasWidth +'" height="'+ canvasHeight+'"></canvas>').css({'overflow':'hidden', 'background-color': '#FFFFFF'});
+		
+		var extraWidth = window.innerWidth - canvasWidth;
+		
+		$('#canvas').css({'background-color': '#5A1D0E', 'margin-left': extraWidth/2});
+	}
+	
 	scaleWidth = canvasWidth / constant.width;
 	scaleHeight = canvasHeight / constant.height;
-	
-	$('body').html('<canvas id="canvas" width="'+ canvasWidth +'" height="'+ canvasHeight+'"></canvas>').css({'overflow':'hidden'});
 	
 	canvas = document.getElementById('canvas');
 	ctx = canvas.getContext("2d");
 }
 
 socket.on('countdown', function(timer){
-	setupCanvas();
 	$('#header').animate({opacity: 0}, 500);
-	menu.height(window.innerHeight);
-	menu.html('<div class="huge">' + timer-- + '</div>');
+	setupCanvas();
+	
+	ctx.font = "100px Monospace";
+	ctx.fillStyle = "white";
+	ctx.textAlign = "center";
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	ctx.fillText(timer--, canvasWidth/2, canvasHeight/2);
+	
 	var clock = setInterval(function(){
 		if(timer == 0){
 			clearInterval(clock);
-			
+			ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+			ctx.fillText("Go!", canvasWidth/2, canvasHeight/2);
 		}
-		else
-			menu.html('<div class="huge">' + timer-- + '</div>').fadeIn(200);
+		else{
+			ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+			ctx.fillText(timer--, canvasWidth/2, canvasHeight/2);
+		}
 	}, 1000);
 });
 
 socket.on('frame', function(goodGuys, badGuys, bullets, secs){
-	console.log("Frame");
 	var i = 0;
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	ctx.fillStyle = constant.badGuyColor;

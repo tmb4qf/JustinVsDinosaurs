@@ -64,7 +64,6 @@ io.on('connection', function(socket){
 	socket.on('join', function(name, key){
 		var game = findGame(key);
 		if(game){
-			var game = games[i];
 			var color = game.getColor();
 			
 			var newPlayer = new Player(socket.id, key, game.players.length, name, color);
@@ -96,27 +95,32 @@ io.on('connection', function(socket){
 			var columnCount = 0;
 			
 			for(var i = 0; i < len; i++){
-				game.goodGuys[i].x = constant.width / 2 + position[columnCount++] * 100;
-				game.goodGuys[i].y = constant.height / 2 + position[rowCount++] * 100;
+				if(i % position.length == 0)
+					rowCount++;
 				
+				game.goodGuys[i].x = constant.width / 2 + position[columnCount++] * 100;
+				game.goodGuys[i].y = constant.height / 2 + position[rowCount] * 100;
+			
 				if(columnCount == position.length)
 					columnCount = 0;
 				if(rowCount == position.length)
 					rowCount = 0;
 			}
+			
+			game.reestablishTargets();
 		}
 	});
 	
 	socket.on('keyPress', function(dir, gameID, index){
 		var game = findInPlayGame(gameID);
-		if(game){
+		if(game && game.goodGuys[index].alive){
 			game.goodGuys[index].dir = dir;
 		}
 	});
 	
 	socket.on('bullet', function(dir, gameID, index){
 		var game = findInPlayGame(gameID);
-		if(game && game.goodGuys[index].alive == true){
+		if(game && game.goodGuys[index].alive){
 			var bullet = new core.Bullet(game.goodGuys[index].x, game.goodGuys[index].y, dir);
 			game.bullets.push(bullet);
 		}
@@ -129,15 +133,21 @@ var gameLoop = setInterval(function(){
 		var game = inPlayGames[i];
 		game.update();
 		
-		if(game.framesThisWave == 300){
-			game.framesThisWave = 0;
-			game.createBadGuys(game.secs/2);
-			game.secs++;
-		}
-		else if(game.framesThisWave % 30 == 0){
-			game.secs++;
-		}
 		game.framesThisWave++;
+		if(game.framesThisWave == constant.frameRate * 10){
+			game.framesThisWave = 0;
+			game.createBadGuys(game.secs/2 + 5);
+		}
+		
+		if(game.framesThisWave % constant.frameRate == 0){
+			game.secs++;
+		}
+		
+		if(game.framesThisWave % constant.reestablishTargetFrequency == 0){
+			game.reestablishTargets();
+		}
+		
+		
 		
 		io.to(game.key).emit('frame', game.goodGuys, game.badGuys, game.bullets, game.secs);
 	}
