@@ -9,10 +9,9 @@ var canvas;
 var ctx;
 
 var constant = {
-	frameRate : 30,
-	goodGuySize: 30,
-	badGuySize: 15,
-	bulletSize: 10,
+	goodGuySize: 20,
+	badGuySize: 10,
+	bulletSize: 5,
 	badGuyColor: '#FF3B3B',
 	bulletColor: '#F2F2F2',
 	width: 1200,
@@ -74,25 +73,26 @@ function startGame(){
 }
 
 function setupCanvas(){
-	cavansWidth = window.innerWidth;
+	canvasWidth = window.innerWidth;
 	canvasHeight = window.innerHeight;
 	scaleWidth = canvasWidth / constant.width;
 	scaleHeight = canvasHeight / constant.height;
 	
-	$('body').html('<canvas id="canvas" width="'+ canvasWidth +'" height="'+ canvasHeight+'"></canvas>');
+	$('body').html('<canvas id="canvas" width="'+ canvasWidth +'" height="'+ canvasHeight+'"></canvas>').css({'overflow':'hidden'});
 	
 	canvas = document.getElementById('canvas');
 	ctx = canvas.getContext("2d");
 }
 
 socket.on('countdown', function(timer){
+	setupCanvas();
 	$('#header').animate({opacity: 0}, 500);
 	menu.height(window.innerHeight);
 	menu.html('<div class="huge">' + timer-- + '</div>');
 	var clock = setInterval(function(){
 		if(timer == 0){
 			clearInterval(clock);
-			setupCanvas();
+			
 		}
 		else
 			menu.html('<div class="huge">' + timer-- + '</div>').fadeIn(200);
@@ -100,35 +100,36 @@ socket.on('countdown', function(timer){
 });
 
 socket.on('frame', function(goodGuys, badGuys, bullets, secs){
+	console.log("Frame");
 	var i = 0;
-	
-	context.fillStyle = constant.badGuyColor;
-	context.fill();
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	ctx.fillStyle = constant.badGuyColor;
 	var badGuyLen = badGuys.length;
 	for(i = 0; i < badGuyLen; i++){
-		context.beginPath();
-		context.arc(badGuys[i].x, badGuys[i].y, constant.badGuySize, 0, 2 * Math.PI);
-		context.stroke();
+		ctx.beginPath();
+		ctx.arc(badGuys[i].x * scaleWidth, badGuys[i].y * scaleHeight, constant.badGuySize, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.fill();
 	}
 	
 	var goodGuyLen = goodGuys.length;
 	for(i = 0; i < goodGuyLen; i++){
-		if(game.goodGuys[i].alive == true){
-			context.fillStyle = goodGuys[i].color;
-			context.fill();
-			context.beginPath();
-			context.arc(goodGuys[i].x, goodGuys[i].y, constant.goodGuySize, 0, 2 * Math.PI);
-			context.stroke();
+		if(goodGuys[i].alive == true){
+			ctx.fillStyle = goodGuys[i].color;
+			ctx.beginPath();
+			ctx.arc(goodGuys[i].x * scaleWidth, goodGuys[i].y * scaleHeight, constant.goodGuySize, 0, 2 * Math.PI);
+			ctx.stroke();
+			ctx.fill();
 		}
 	}
 	
-	context.fillStyle = constant.bulletColor;
-	context.fill();
+	ctx.fillStyle = constant.bulletColor;
 	var bulletLen = bullets.length;
 	for(i = 0; i < bulletLen; i++){
-		context.beginPath();
-		context.arc(bullets[i].x, bullets[i].y, constant.bulletSize, 0, 2 * Math.PI);
-		context.stroke();
+		ctx.beginPath();
+		ctx.arc(bullets[i].x * scaleWidth, bullets[i].y * scaleHeight, constant.bulletSize, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.fill();
 	}
 });
 

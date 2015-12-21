@@ -52,7 +52,7 @@ io.on('connection', function(socket){
 		var newPlayer = new Player(socket.id, key, 0, name, color);
 		newGame.players.push(newPlayer);
 		
-		var newGoodGuy = core.GoodGuy(color);
+		var newGoodGuy = new core.GoodGuy(color);
 		newGame.goodGuys.push(newGoodGuy);
 		games.push(newGame);
 		
@@ -70,7 +70,7 @@ io.on('connection', function(socket){
 			var newPlayer = new Player(socket.id, key, game.players.length, name, color);
 			game.players.push(newPlayer);
 			
-			var newGoodGuy = core.GoodGuy(color);
+			var newGoodGuy = new core.GoodGuy(color);
 			game.goodGuys.push(newGoodGuy);
 			
 			socket.join(key);
@@ -126,17 +126,18 @@ io.on('connection', function(socket){
 var gameLoop = setInterval(function(){
 	var len = inPlayGames.length;
 	for(var i = 0; i < len; i++){
-		var game = inPlayGames[i].update();
+		var game = inPlayGames[i];
 		game.update();
 		
-		if(game.waveFrames == 300){
-			game.waveFrame = 0;
-			game.createBadGuys(game.secs / 2);
+		if(game.framesThisWave == 300){
+			game.framesThisWave = 0;
+			game.createBadGuys(game.secs/2);
 			game.secs++;
 		}
-		else if(game.waveFrames % 30 == 0){
-			game.secs++
+		else if(game.framesThisWave % 30 == 0){
+			game.secs++;
 		}
+		game.framesThisWave++;
 		
 		io.to(game.key).emit('frame', game.goodGuys, game.badGuys, game.bullets, game.secs);
 	}
@@ -145,7 +146,7 @@ var gameLoop = setInterval(function(){
 function findGame(gameID){
 	var len = games.length;
 	for(var i = 0; i < len; i++){
-		if(gameID == games[i].key);
+		if(gameID == games[i].key)
 			return games[i];
 	}
 	
@@ -155,7 +156,7 @@ function findGame(gameID){
 function findInPlayGame(gameID){
 	var len = inPlayGames.length;
 	for(var i = 0; i < len; i++){
-		if(gameID == inPlayGames[i].key);
+		if(gameID == inPlayGames[i].key)
 			return inPlayGames[i];
 	}
 	

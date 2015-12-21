@@ -44,7 +44,7 @@ Game.prototype.checkDeath = function()
 			for(var j = 0; j < badGuyLen; j++){
 				if(Math.abs(this.badGuys[j].x - this.goodGuys[i].x) < 15 && Math.abs(this.badGuys[j].y - this.goodGuys[i].y) < 15)
 				{
-					this.goodGuys[j].alive = false;
+					this.goodGuys[i].alive = false;
 					this.numAlive--;
 					break;
 				}
@@ -100,7 +100,7 @@ Game.prototype.updateGoodGuys = function()
 	var len = this.goodGuys.length;
 	for(var i = 0; i < len; i++)
 	{
-		var goodGuy = this.goodGuy[i];
+		var goodGuy = this.goodGuys[i];
 		if(goodGuy.dir == dir.LEFT && validMove(goodGuy, dir.LEFT))
 			goodGuy.x -= constant.goodGuySpeed;
 		else if(goodGuy.dir == dir.RIGHT && validMove(goodGuy, dir.RIGHT))
@@ -207,7 +207,7 @@ function Bullet(x,y,dir)
 Bullet.prototype.move = function(){
 	switch(this.dir){
 		case dir.LEFT:
-			this.x -+ constant.bulletSpeed;
+			this.x -= constant.bulletSpeed;
 			break;
 		case dir.RIGHT:
 			this.x += constant.bulletSpeed;
