@@ -12,7 +12,8 @@ var constant = {
 	goodGuySize: 20,
 	badGuySize: 10,
 	bulletSize: 5,
-	badGuyColor: '#FF3B3B',
+	badGuyColor: '#FB4848',
+	badGuyBorder: '#FF1414',
 	bulletColor: '#F2F2F2',
 	width: 1200,
 	height: 700
@@ -132,6 +133,8 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	var i = 0;
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	ctx.fillStyle = constant.badGuyColor;
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = constant.badGuyBorder;
 	var badGuyLen = badGuys.length;
 	for(i = 0; i < badGuyLen; i++){
 		ctx.beginPath();
@@ -146,6 +149,16 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 			ctx.fillStyle = goodGuys[i].color;
 			ctx.beginPath();
 			ctx.arc(goodGuys[i].x * scaleWidth, goodGuys[i].y * scaleHeight, constant.goodGuySize, 0, 2 * Math.PI);
+			
+			if(myPlayer.index == i){
+				ctx.lineWidth = 7;
+				ctx.strokeStyle = '#FFFFFF';
+			}
+			else{
+				ctx.lineWidth = 7;
+				ctx.strokeStyle = goodGuys[i].color;
+			}
+			
 			ctx.stroke();
 			ctx.fill();
 		}
@@ -156,9 +169,18 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	for(i = 0; i < bulletLen; i++){
 		ctx.beginPath();
 		ctx.arc(bullets[i].x * scaleWidth, bullets[i].y * scaleHeight, constant.bulletSize, 0, 2 * Math.PI);
-		ctx.stroke();
 		ctx.fill();
 	}
+	
+	ctx.font = "20px Monospace";
+	ctx.fillStyle = "white";
+	ctx.textAlign = "right";
+	ctx.fillText("Total Time: " + secs + " secs.", canvasWidth - 10, 20);
+	ctx.fillText("Next Wave: " + (10 - (secs % 10)) + " secs.", canvasWidth - 10, 40);
+});
+
+socket.on('gameOver', function(secs){
+	console.log("game over");
 });
 
 $(document).keydown(function(e){

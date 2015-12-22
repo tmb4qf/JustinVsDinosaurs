@@ -47,15 +47,17 @@ Game.prototype.checkDeath = function()
 				{
 					this.goodGuys[i].alive = false;
 					this.numAlive--;
-					break;
+					return true;
 				}
 			}
 		}
 	}
 	
-	if(this.numAlive == 0)
-	{
-		//socket.emit('gameOver');
+	if(this.numAlive == 0){
+		return false;
+	}
+	else{
+		return true;
 	}
 }
 
@@ -93,7 +95,6 @@ Game.prototype.update = function()
 	this.updateGoodGuys();
 	this.updateBadGuys();
 	this.updateBullets();
-	this.checkDeath();
 }
 
 Game.prototype.updateGoodGuys = function()
@@ -125,7 +126,7 @@ Game.prototype.updateBadGuys = function()
 		var deltaY = Math.abs(goodGuy.y - badGuy.y);
 		var rand = Math.random();
 			
-		if(deltaX < 5 || (rand > .5 && deltaY > 5)){
+		if(deltaX < 3 || (rand > .5 && deltaY > 3)){
 			if(badGuy.y < goodGuy.y)
 				badGuy.y += constant.badGuySpeed;
 			else

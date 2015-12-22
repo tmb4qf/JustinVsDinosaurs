@@ -35,29 +35,32 @@ app.get('/js/:jsFile', function(req, res){
 var games = [];
 var inPlayGames = [];
 
-function Player(socketID, gameID, index, name, color){
+function Player(socketID, gameID, index, name, color, host){
 	this.socketID = socketID;
 	this.gameID = gameID;
 	this.index = index;
 	this.name = name;
 	this.color = color;
+	this.host = host;
 }
 
 io.on('connection', function(socket){
+	var myPlayer;
+	
 	socket.on('host', function(name){
 		var key = generateKey();
 		var newGame = new core.Game(key);
 		var color = newGame.getColor();
 		
-		var newPlayer = new Player(socket.id, key, 0, name, color);
-		newGame.players.push(newPlayer);
+		myPlayer = new Player(socket.id, key, 0, name, color, true);
+		newGame.players.push(myPlayer);
 		
 		var newGoodGuy = new core.GoodGuy(color);
 		newGame.goodGuys.push(newGoodGuy);
 		games.push(newGame);
 		
 		socket.join(key);
-		io.to(socket.id).emit('joined', newPlayer, true);
+		io.to(socket.id).emit('joined', myPlayer, true);
 		io.to(key).emit('playerList', key, newGame.players);
 	});
 	
@@ -66,14 +69,14 @@ io.on('connection', function(socket){
 		if(game){
 			var color = game.getColor();
 			
-			var newPlayer = new Player(socket.id, key, game.players.length, name, color);
-			game.players.push(newPlayer);
+			myPlayer = new Player(socket.id, key, game.players.length, name, color, false);
+			game.players.push(myPlayer);
 			
 			var newGoodGuy = new core.GoodGuy(color);
 			game.goodGuys.push(newGoodGuy);
 			
 			socket.join(key);
-			io.to(socket.id).emit('joined', newPlayer, false);
+			io.to(socket.id).emit('joined', myPlayer, false);
 			io.to(key).emit('playerList', key, game.players);
 		}
 		else{
@@ -90,6 +93,7 @@ io.on('connection', function(socket){
 			}, 5500);
 			
 			var len = game.goodGuys.length;
+			game.numAlive = len;
 			var position = [0,-1,1,-2,2];
 			var rowCount = 0;
 			var columnCount = 0;
@@ -125,6 +129,16 @@ io.on('connection', function(socket){
 			game.bullets.push(bullet);
 		}
 	});
+	
+	socket.on('disconnect', function(){
+		if(myPlayer && myPlayer.host){
+			for(var i=0; i < games.length; i++){
+				if(games[i].key == myPlayer.gameID){
+					games.splice(i,1);
+				}
+			}
+		}
+	});
 });
 
 var gameLoop = setInterval(function(){
@@ -132,6 +146,10 @@ var gameLoop = setInterval(function(){
 	for(var i = 0; i < len; i++){
 		var game = inPlayGames[i];
 		game.update();
+		if(!game.checkDeath()){
+			inPlayGames.splice(i,1);
+			io.to(game.key).emit('gameOver', game.secs);
+		}
 		
 		game.framesThisWave++;
 		if(game.framesThisWave == constant.frameRate * 10){
