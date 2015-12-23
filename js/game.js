@@ -1,5 +1,8 @@
 var constant = {
 	frameRate : 30,
+	goodGuySize: 20,
+	badGuySize: 10,
+	bulletSize: 5,
 	goodGuySpeed : 5,
 	badGuySpeed : 3,
 	bulletSpeed : 15,
@@ -43,7 +46,7 @@ Game.prototype.checkDeath = function()
 		if(this.goodGuys[i].alive){
 			var badGuyLen = this.badGuys.length;
 			for(var j = 0; j < badGuyLen; j++){
-				if(Math.abs(this.badGuys[j].x - this.goodGuys[i].x) < 15 && Math.abs(this.badGuys[j].y - this.goodGuys[i].y) < 15)
+				if(Math.abs(this.badGuys[j].x - this.goodGuys[i].x) < constant.goodGuySize && Math.abs(this.badGuys[j].y - this.goodGuys[i].y) < constant.goodGuySize)
 				{
 					this.goodGuys[i].alive = false;
 					this.numAlive--;
@@ -186,7 +189,7 @@ Game.prototype.updateBullets = function()
 		for(var j=0; j<len2; j++)
 		{
 			var badGuy = this.badGuys[j];
-			if(Math.abs(bullet.x - badGuy.x) < 10 && Math.abs(bullet.y - badGuy.y) < 10)
+			if(Math.abs(bullet.x - badGuy.x) < constant.badGuySize && Math.abs(bullet.y - badGuy.y) < constant.badGuySize)
 			{
 				this.badGuys.splice(j,1);
 				len2--;

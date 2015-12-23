@@ -85,6 +85,7 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('startGame', function(key){
+		console.log("Starting Game: " + games.length);
 		var game = findGame(key);
 		if(game){
 			io.to(key).emit('countdown', 5);
@@ -138,6 +139,7 @@ io.on('connection', function(socket){
 				}
 			}
 		}
+		console.log("Host Disconnected: " + games.length);
 	});
 });
 
@@ -149,6 +151,8 @@ var gameLoop = setInterval(function(){
 		if(!game.checkDeath()){
 			inPlayGames.splice(i,1);
 			io.to(game.key).emit('gameOver', game.secs);
+			len--;
+			i--;
 		}
 		
 		game.framesThisWave++;
