@@ -49,6 +49,7 @@ Game.prototype.checkDeath = function()
 				if(Math.abs(this.badGuys[j].x - this.goodGuys[i].x) < constant.goodGuySize && Math.abs(this.badGuys[j].y - this.goodGuys[i].y) < constant.goodGuySize)
 				{
 					this.goodGuys[i].alive = false;
+					this.goodGuys[i].deathTime = this.secs;
 					this.numAlive--;
 					return true;
 				}
@@ -191,6 +192,7 @@ Game.prototype.updateBullets = function()
 			var badGuy = this.badGuys[j];
 			if(Math.abs(bullet.x - badGuy.x) < constant.badGuySize && Math.abs(bullet.y - badGuy.y) < constant.badGuySize)
 			{
+				this.goodGuys[bullet.source].kills++;
 				this.badGuys.splice(j,1);
 				len2--;
 				j--;
@@ -206,6 +208,8 @@ function GoodGuy(color)
 	this.dir = dir.NONE;
 	this.color = color;
 	this.alive = true;
+	this.kills = 0;
+	this.deathTime;
 }
 
 function BadGuy(x,y)
@@ -215,11 +219,12 @@ function BadGuy(x,y)
 	this.target;
 }
 
-function Bullet(x,y,dir)
+function Bullet(x,y,dir, source)
 {
 	this.x = x;
 	this.y = y;
 	this.dir = dir;
+	this.source = source;
 }
 
 Bullet.prototype.move = function(){

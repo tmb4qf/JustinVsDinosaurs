@@ -46,14 +46,14 @@ socket.on('playerList', function(key, players){
 	var newHtml = '<div id="instructions" class="panel">';
 	
 	if(myPlayer.host){
-		newHtml += 'You are the host of this game. This key will allow friends to join your game. Start the game when all players have joined.<br/><br/> <p class="heading">Key:'+ key +'</p><button class="startGameButton" onclick="startGame()">Start Game</button></div>';
+		newHtml += 'You are the host of this game. This key will allow friends to join your game. Start the game when all paleontologists have joined.<br/><br/> <p class="heading">Key:'+ key +'</p><button class="startGameButton" onclick="startGame()">Start Game</button></div>';
 	}
 	else{
-		newHtml += 'Waiting for players to join...</div>';
+		newHtml += 'Waiting for paleontologists to join...</div>';
 	}
 	
 	
-	newHtml += '<div id="playerList" class="panel"><p class="heading">Players</p><ul>';
+	newHtml += '<div id="playerList" class="panel"><p class="heading">Paleontologists</p><ul>';
 	for(var i = 0; i < players.length; i++){
 		newHtml += '<li class="bold" style="color:' + players[i].color + ';">' + players[i].name + '</li>';
 	}	
@@ -148,13 +148,10 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	var i = 0;
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 	ctx.fillStyle = constant.badGuyColor;
-	ctx.lineWidth = 5;
-	ctx.strokeStyle = constant.badGuyBorder;
 	var badGuyLen = badGuys.length;
 	for(i = 0; i < badGuyLen; i++){
 		ctx.beginPath();
 		ctx.arc(badGuys[i].x * scaleWidth, badGuys[i].y * scaleHeight, constant.badGuySize, 0, 2 * Math.PI);
-		ctx.stroke();
 		ctx.fill();
 	}
 	
@@ -194,26 +191,27 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	ctx.fillText("Next Wave: " + (10 - (secs % 10)) + " secs.", canvasWidth - 10, 40);
 });
 
-socket.on('gameOver', function(secs){
+socket.on('gameOver', function(game){
 	if(myPlayer.host){
-		var modalHtml = '<div id="overlay"></div><div class="modal"><p class="huge center">Game Over</p><div class="container"><div class="messageDiv">Your team lasted '+ secs +' seconds. </div><div class="messageDiv" id="hostStatus">Would you like to host another game?<br/><br/><button class="startGameButton" onclick="hostAgain()">Host</button></div></div><div class="container" id="newPlayerList"></div></div>';
+		var modalHtml = '<div id="overlay"></div><div class="modal"><p class="huge center">Game Over</p><div class="container"><div class="messageDiv">Your team lasted '+ game.secs +' seconds. </div><div class="messageDiv" id="hostStatus">Would you like to host another game?<br/><br/><button class="startGameButton" onclick="hostAgain()">Host</button></div></div><div class="container" id="newPlayerList"></div></div>';
 	}
 	else{
-		var modalHtml = '<div id="overlay"></div><div class="modal"><p class="huge center">Game Over</p><div class="container"><div class="messageDiv">Your team lasted '+ secs +' seconds.</div><div class="messageDiv" id="hostStatus">Waiting for host to join again.</div></div><div class="container" id="newPlayerList"></div></div>';
+		var modalHtml = '<div id="overlay"></div><div class="modal"><p class="huge center">Game Over</p><div class="container"><div class="messageDiv">Your team lasted '+ game.secs +' seconds.</div><div class="messageDiv" id="hostStatus">Waiting for host to join again.</div></div><div class="container" id="newPlayerList"></div></div>';
 	}
 	$('body').append(modalHtml);
+	console.log(game);
 });
 
 socket.on('newJoinee', function(players){
 	if($('#newPlayerList').length){
 		if(myPlayer.host){
-			$('#hostStatus').html('You are the host of this game. This key will allow friends to join your game. Start the game when all players have joined. <br/><br/><p class="heading">Key: '+ myPlayer.gameID +'</p><button class="startGameButton" onclick="startGame()">Start Game</button>');
+			$('#hostStatus').html('You are the host of this game. This key will allow friends to join your game. Start the game when all paleontologists have joined. <br/><br/><p class="heading">Key: '+ myPlayer.gameID +'</p><button class="startGameButton" onclick="startGame()">Start Game</button>');
 		}
 		else{
 			$('#hostStatus').html('Host wants to play another game. Would you like to join? <br/><br/><button class="startGameButton" onclick="joinAgain()">Join</button>');
 		}
 		
-		var newHtml = '<div class="messageDiv"><p class="heading">Players</p><ul>';
+		var newHtml = '<div class="messageDiv"><p class="heading">Paleontologists</p><ul>';
 		for(var i = 0; i < players.length; i++){
 			newHtml += '<li class="bold" style="color:' + players[i].color + ';">' + players[i].name + '</li>';
 		}	
@@ -226,19 +224,23 @@ socket.on('newJoinee', function(players){
 		var newHtml = '<div id="instructions" class="panel">';
 		
 		if(myPlayer.host){
-			newHtml += 'You are the host of this game. This key will allow friends to join your game. Start the game when all players have joined.<br/><br/> <p class="heading">Key:'+ myPlayer.gameID +'</p><button class="startGameButton" onclick="startGame()">Start Game</button></div>';
+			newHtml += 'You are the host of this game. This key will allow friends to join your game. Start the game when all paleontologists have joined.<br/><br/> <p class="heading">Key:'+ myPlayer.gameID +'</p><button class="startGameButton" onclick="startGame()">Start Game</button></div>';
 		}
 		else{
-			newHtml += 'Waiting for players to join...</div>';
+			newHtml += 'Waiting for paleontologists to join...</div>';
 		}
 		
-		newHtml += '<div id="playerList" class="panel"><p class="heading">Players</p><ul>';
+		newHtml += '<div id="playerList" class="panel"><p class="heading">Paleontologists</p><ul>';
 		for(var i = 0; i < players.length; i++){
 			newHtml += '<li class="bold" style="color:' + players[i].color + ';">' + players[i].name + '</li>';
 		}	
 		newHtml += '</ul></div>';
 		menu.html(newHtml).fadeIn(200);		
 	}
+});
+
+socket.on('hostDisconnect', function(){
+	$('#hostStatus').html('Host has left the game.');
 });
 
 $(document).keydown(function(e){

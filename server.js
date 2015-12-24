@@ -125,7 +125,7 @@ io.on('connection', function(socket){
 	socket.on('bullet', function(dir, gameID, index){
 		var game = findInPlayGame(gameID);
 		if(game && game.goodGuys[index].alive){
-			var bullet = new core.Bullet(game.goodGuys[index].x, game.goodGuys[index].y, dir);
+			var bullet = new core.Bullet(game.goodGuys[index].x, game.goodGuys[index].y, dir, index);
 			game.bullets.push(bullet);
 		}
 	});
@@ -166,6 +166,8 @@ io.on('connection', function(socket){
 			for(var i=0; i < games.length; i++){
 				if(games[i].key == myPlayer.gameID){
 					games.splice(i,1);
+					io.to(myPlayer.gameID).emit('hostDisconnect');
+					break;
 				}
 			}
 		}
@@ -180,7 +182,7 @@ var gameLoop = setInterval(function(){
 		
 		if(!game.checkDeath()){
 			inPlayGames.splice(i,1);
-			io.to(game.key).emit('gameOver', game.secs);
+			io.to(game.key).emit('gameOver', game);
 			len--;
 			i--;
 		}
