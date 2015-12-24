@@ -4,7 +4,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 var core = require('./js/game.js');
 var constant = core.constants;
-var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4};
+var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4, NONE: 5};
 
 server.listen(8080, function(){
 	console.log("Let's Go!");
@@ -61,7 +61,7 @@ io.on('connection', function(socket){
 		
 		socket.join(key);
 		io.to(socket.id).emit('joined', myPlayer, true);
-		io.to(key).emit('playerList', key, newGame.players);
+		io.to(key).emit('newJoinee', newGame.players);
 	});
 	
 	socket.on('join', function(name, key){
@@ -77,7 +77,7 @@ io.on('connection', function(socket){
 			
 			socket.join(key);
 			io.to(socket.id).emit('joined', myPlayer, false);
-			io.to(key).emit('playerList', key, game.players);
+			io.to(key).emit('newJoinee', game.players);
 		}
 		else{
 			io.to(socket.id).emit('invalidKey');
@@ -85,7 +85,6 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('startGame', function(key){
-		console.log("Starting Game: " + games.length);
 		var game = findGame(key);
 		if(game){
 			io.to(key).emit('countdown', 5);
@@ -131,6 +130,37 @@ io.on('connection', function(socket){
 		}
 	});
 	
+	socket.on('hostAgain', function(key){
+		var game = findGame(key);
+		game.goodGuys = [];
+		game.players = [];
+		game.badGuys = [];
+		game.bullets = [];
+		game.createBadGuys(5);
+		game.secs = 0;
+		game.framesThisWave = 0;
+
+		myPlayer.index = 0;
+		game.players.push(myPlayer);
+		var newGoodGuy = new core.GoodGuy(myPlayer.color);
+		game.goodGuys.push(newGoodGuy);
+		
+		io.to(socket.id).emit('joined', myPlayer, true);
+		io.to(key).emit('newJoinee', game.players);
+	});
+	
+	socket.on('joinAgain', function(key){
+		var game = findGame(key);
+		
+		myPlayer.index = game.players.length;
+		game.players.push(myPlayer);
+		var newGoodGuy = new core.GoodGuy(myPlayer.color);
+		game.goodGuys.push(newGoodGuy);
+		
+		io.to(socket.id).emit('joined', myPlayer, false);
+		io.to(key).emit('newJoinee', game.players);
+	});
+	
 	socket.on('disconnect', function(){
 		if(myPlayer && myPlayer.host){
 			for(var i=0; i < games.length; i++){
@@ -139,7 +169,6 @@ io.on('connection', function(socket){
 				}
 			}
 		}
-		console.log("Host Disconnected: " + games.length);
 	});
 });
 
@@ -148,6 +177,7 @@ var gameLoop = setInterval(function(){
 	for(var i = 0; i < len; i++){
 		var game = inPlayGames[i];
 		game.update();
+		
 		if(!game.checkDeath()){
 			inPlayGames.splice(i,1);
 			io.to(game.key).emit('gameOver', game.secs);

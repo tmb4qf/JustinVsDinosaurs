@@ -35,7 +35,7 @@
 			menu.width(totalWidth);
 			
 			$('#header').fadeIn(500, function(){
-				$('.button').show(1000);
+				$('.button').show(500);
 			});
 			
 			$('#rButton').hover(function(){
@@ -57,7 +57,7 @@
 			});
 			
 			$('#rButton').click(function(){
-				$('.button').hide(400, function(){
+				$('.button').hide(300, function(){
 					var newHtml = '<span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name"></input></span>';
 					newHtml += '<button id="hostButton" onclick="host()">Host</button>';
 					menu.html(newHtml);
@@ -68,7 +68,7 @@
 			
 			});
 			$('#lButton').click(function(){
-				$('.button').hide(400, function(){
+				$('.button').hide(300, function(){
 					var newHtml = '<span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name"></input><br/><input class="input" type="text" id="key" size=7 maxlength=5 autocomplete="off" placeholder="Game Key"></input></span>';
 					newHtml += '<button id="hostButton" onclick="join()">Join</button>';
 					menu.html(newHtml);

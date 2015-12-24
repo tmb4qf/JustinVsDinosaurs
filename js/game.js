@@ -11,7 +11,7 @@ var constant = {
 	reestablishTargetFrequency: 30
 };
 
-var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4};
+var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4, NONE: 5};
 
 function Game(key)
 {
@@ -203,7 +203,7 @@ function GoodGuy(color)
 {
 	this.x;
 	this.y;
-	this.dir;
+	this.dir = dir.NONE;
 	this.color = color;
 	this.alive = true;
 }
