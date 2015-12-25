@@ -16,8 +16,13 @@ body{
 }
 
 .button{
-	margin: 5px;
+	padding: 0px;
 	float: left;
+}
+
+img{
+	padding: 0px;
+	margin: 0px;
 }
 
 #nameBox{

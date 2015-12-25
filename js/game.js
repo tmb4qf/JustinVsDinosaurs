@@ -174,29 +174,32 @@ Game.prototype.reestablishTargets = function(){
 
 Game.prototype.updateBullets = function()
 {
-	var len = this.bullets.length;
-	for(var i = 0; i < len; i++)
+	for(var i = 0; i < this.bullets.length; i++)
 	{
 		var bullet = this.bullets[i];
 		bullet.move();
-		if(bullet.x < 0 || bullet.x > constant.width || bullet.y < 0 || bullet.y > constant.height)
-		{
-			this.bullets.splice(i,1);
-			len--;
-			i--;
-		}
+		var bulletKill = false
 		
-		var len2 = this.badGuys.length;
-		for(var j=0; j<len2; j++)
+		for(var j=0; j<this.badGuys.length; j++)
 		{
 			var badGuy = this.badGuys[j];
 			if(Math.abs(bullet.x - badGuy.x) < constant.badGuySize && Math.abs(bullet.y - badGuy.y) < constant.badGuySize)
 			{
+				this.bullets.splice(i,1);
+
 				this.goodGuys[bullet.source].kills++;
+				i--;
+				bulletKill = true;
 				this.badGuys.splice(j,1);
-				len2--;
 				j--;
+				break;
 			}
+		}
+		
+		if(!bulletKill && bullet.x < 0 || bullet.x > constant.width || bullet.y < 0 || bullet.y > constant.height)
+		{
+			this.bullets.splice(i,1);
+			i--;
 		}
 	}
 }

@@ -22,7 +22,7 @@ app.get('/css/style.css', function(req, res){
 
 app.get('/images/:img', function(req, res){
 	res.status(200);
-	res.sendFile(__dirname + '/images/' + req.params.img); 
+	res.sendFile(__dirname + '/images/' + req.params.img);
 });
 
 app.get('/js/:jsFile', function(req, res){
