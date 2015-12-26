@@ -66,7 +66,8 @@ io.on('connection', function(socket){
 	
 	socket.on('join', function(name, key){
 		var game = findGame(key);
-		if(game){
+		var inPlayGame = findInPlayGame(key);
+		if(game && !inPlayGame){
 			var color = game.getColor();
 			
 			myPlayer = new Player(socket.id, key, game.players.length, name, color, false);
@@ -78,6 +79,9 @@ io.on('connection', function(socket){
 			socket.join(key);
 			io.to(socket.id).emit('joined', myPlayer, false);
 			io.to(key).emit('newJoinee', game.players);
+		}
+		else if(game && inPlayGame){
+			io.to(socket.id).emit('inPlayError');
 		}
 		else{
 			io.to(socket.id).emit('invalidKey');

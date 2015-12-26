@@ -9,9 +9,9 @@ var canvas;
 var ctx;
 
 var constant = {
-	goodGuySize: 20,
-	badGuySize: 10,
-	bulletSize: 5,
+	goodGuySize: 15,
+	badGuySize: 8,
+	bulletSize: 4,
 	badGuyColor: '#FB4848',
 	badGuyBorder: '#FF1414',
 	bulletColor: '#F2F2F2',
@@ -46,8 +46,17 @@ socket.on('joined', function(player, host){
 });
 
 socket.on('invalidKey', function(){
-	var addedHtml = '<div class="error">This key is invalid. Please try again.</div>';
-	menu.append(addedHtml);
+	if($('.error').length)
+		$('.error').html('This key is invalid. Please try again.');
+	else
+		menu.append('<div class="error">This key is invalid. Please try again.</div>');
+});
+
+socket.on('inPlayError', function(){
+	if($('.error').length)
+		$('.error').html('This game is currently in play. Please wait until game is over and try again.');
+	else
+		menu.append('<div class="error">This game is currently in play. Please wait until game is over and try again.</div>');
 });
 
 function startGame(){
@@ -137,7 +146,7 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 			ctx.fillStyle = '#FF1212';
 		
 		ctx.beginPath();
-		ctx.arc(badGuys[i].x * scaleWidth, badGuys[i].y * scaleHeight, constant.badGuySize, 0, 2 * Math.PI);
+		ctx.arc(badGuys[i].x * scaleWidth, badGuys[i].y * scaleHeight, constant.badGuySize * scaleWidth, 0, 2 * Math.PI);
 		ctx.fill();
 	}
 	
@@ -146,7 +155,7 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 		if(goodGuys[i].alive == true){
 			ctx.fillStyle = goodGuys[i].color;
 			ctx.beginPath();
-			ctx.arc(goodGuys[i].x * scaleWidth, goodGuys[i].y * scaleHeight, constant.goodGuySize, 0, 2 * Math.PI);
+			ctx.arc(goodGuys[i].x * scaleWidth, goodGuys[i].y * scaleHeight, constant.goodGuySize * scaleWidth, 0, 2 * Math.PI);
 			
 			if(myPlayer.index == i){
 				ctx.lineWidth = 7;
@@ -166,7 +175,7 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	var bulletLen = bullets.length;
 	for(i = 0; i < bulletLen; i++){
 		ctx.beginPath();
-		ctx.arc(bullets[i].x * scaleWidth, bullets[i].y * scaleHeight, constant.bulletSize, 0, 2 * Math.PI);
+		ctx.arc(bullets[i].x * scaleWidth, bullets[i].y * scaleHeight, constant.bulletSize * scaleWidth, 0, 2 * Math.PI);
 		ctx.fill();
 	}
 	

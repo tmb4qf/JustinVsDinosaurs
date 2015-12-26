@@ -1,10 +1,9 @@
 var constant = {
 	frameRate : 30,
-	goodGuySize: 20,
-	badGuySize: 10,
-	bulletSize: 5,
+	goodGuySize: 15,
+	badGuySize: 8,
+	bulletSize: 4,
 	goodGuySpeed : 5,
-	badGuySpeed : 4,
 	bulletSpeed : 15,
 	width: 1200,
 	height: 700,
@@ -222,13 +221,7 @@ function BadGuy(x,y)
 	this.x = x;
 	this.y = y;
 	this.target;
-	var rand = Math.floor(Math.random() * 3);
-	if(rand == 0)
-		this.speed = 2.75;
-	else if(rand == 1)
-		this.speed = 3;
-	else if(rand ==2)
-		this.speed = 3.25;
+	this.speed = 3 + (Math.floor(Math.random() * 3) - 1) * .25;
 }
 
 function Bullet(x,y,dir, source)
