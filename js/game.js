@@ -4,7 +4,7 @@ var constant = {
 	badGuySize: 10,
 	bulletSize: 5,
 	goodGuySpeed : 5,
-	badGuySpeed : 3,
+	badGuySpeed : 4,
 	bulletSpeed : 15,
 	width: 1200,
 	height: 700,
@@ -132,15 +132,15 @@ Game.prototype.updateBadGuys = function()
 			
 		if(deltaX < 3 || (rand > .5 && deltaY > 3)){
 			if(badGuy.y < goodGuy.y)
-				badGuy.y += constant.badGuySpeed;
+				badGuy.y += badGuy.speed;//constant.badGuySpeed;
 			else
-				badGuy.y -= constant.badGuySpeed;
+				badGuy.y -= badGuy.speed;//constant.badGuySpeed;
 		}
 		else{
 			if(badGuy.x < goodGuy.x)
-				badGuy.x += constant.badGuySpeed;
+				badGuy.x += badGuy.speed;//constant.badGuySpeed;
 			else
-				badGuy.x -= constant.badGuySpeed;
+				badGuy.x -= badGuy.speed;//constant.badGuySpeed;
 		}
 		
 	}
@@ -178,7 +178,7 @@ Game.prototype.updateBullets = function()
 	{
 		var bullet = this.bullets[i];
 		bullet.move();
-		var bulletKill = false
+		var bulletKill = false;
 		
 		for(var j=0; j<this.badGuys.length; j++)
 		{
@@ -196,7 +196,7 @@ Game.prototype.updateBullets = function()
 			}
 		}
 		
-		if(!bulletKill && bullet.x < 0 || bullet.x > constant.width || bullet.y < 0 || bullet.y > constant.height)
+		if(!bulletKill && (bullet.x < 0 || bullet.x > constant.width || bullet.y < 0 || bullet.y > constant.height))
 		{
 			this.bullets.splice(i,1);
 			i--;
@@ -204,15 +204,17 @@ Game.prototype.updateBullets = function()
 	}
 }
 
-function GoodGuy(color)
+function GoodGuy(color, name)
 {
 	this.x;
 	this.y;
 	this.dir = dir.NONE;
 	this.color = color;
+	this.name = name;
 	this.alive = true;
 	this.kills = 0;
 	this.deathTime;
+	this.numBullets = 0;
 }
 
 function BadGuy(x,y)
@@ -220,6 +222,13 @@ function BadGuy(x,y)
 	this.x = x;
 	this.y = y;
 	this.target;
+	var rand = Math.floor(Math.random() * 3);
+	if(rand == 0)
+		this.speed = 2.75;
+	else if(rand == 1)
+		this.speed = 3;
+	else if(rand ==2)
+		this.speed = 3.25;
 }
 
 function Bullet(x,y,dir, source)

@@ -55,7 +55,7 @@ io.on('connection', function(socket){
 		myPlayer = new Player(socket.id, key, 0, name, color, true);
 		newGame.players.push(myPlayer);
 		
-		var newGoodGuy = new core.GoodGuy(color);
+		var newGoodGuy = new core.GoodGuy(color, name);
 		newGame.goodGuys.push(newGoodGuy);
 		games.push(newGame);
 		
@@ -72,7 +72,7 @@ io.on('connection', function(socket){
 			myPlayer = new Player(socket.id, key, game.players.length, name, color, false);
 			game.players.push(myPlayer);
 			
-			var newGoodGuy = new core.GoodGuy(color);
+			var newGoodGuy = new core.GoodGuy(color, name);
 			game.goodGuys.push(newGoodGuy);
 			
 			socket.join(key);
@@ -125,6 +125,7 @@ io.on('connection', function(socket){
 	socket.on('bullet', function(dir, gameID, index){
 		var game = findInPlayGame(gameID);
 		if(game && game.goodGuys[index].alive){
+			game.goodGuys[index].numBullets++;
 			var bullet = new core.Bullet(game.goodGuys[index].x, game.goodGuys[index].y, dir, index);
 			game.bullets.push(bullet);
 		}
@@ -142,7 +143,7 @@ io.on('connection', function(socket){
 
 		myPlayer.index = 0;
 		game.players.push(myPlayer);
-		var newGoodGuy = new core.GoodGuy(myPlayer.color);
+		var newGoodGuy = new core.GoodGuy(myPlayer.color, myPlayer.name);
 		game.goodGuys.push(newGoodGuy);
 		
 		io.to(socket.id).emit('joined', myPlayer, true);
@@ -154,7 +155,7 @@ io.on('connection', function(socket){
 		
 		myPlayer.index = game.players.length;
 		game.players.push(myPlayer);
-		var newGoodGuy = new core.GoodGuy(myPlayer.color);
+		var newGoodGuy = new core.GoodGuy(myPlayer.color, myPlayer.name);
 		game.goodGuys.push(newGoodGuy);
 		
 		io.to(socket.id).emit('joined', myPlayer, false);

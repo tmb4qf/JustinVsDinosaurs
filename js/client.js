@@ -63,7 +63,7 @@ function hostAgain(){
 }
 
 function joinAgain(){
-	$('#hostStatus').remove();
+	$('#hostStatus').fadeOut(100);
 	socket.emit('joinAgain', myPlayer.gameID);
 }
 
@@ -129,6 +129,13 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	ctx.fillStyle = constant.badGuyColor;
 	var badGuyLen = badGuys.length;
 	for(i = 0; i < badGuyLen; i++){
+		if(badGuys[i].speed == 2.75)
+			ctx.fillStyle = '#FF9696';
+		else if(badGuys[i].speed == 3)
+			ctx.fillStyle = constant.badGuyColor;
+		else if (badGuys[i].speed == 3.25)
+			ctx.fillStyle = '#FF1212';
+		
 		ctx.beginPath();
 		ctx.arc(badGuys[i].x * scaleWidth, badGuys[i].y * scaleHeight, constant.badGuySize, 0, 2 * Math.PI);
 		ctx.fill();
@@ -171,32 +178,47 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 });
 
 socket.on('gameOver', function(game){
+	$('body').append('<div id="overlay"></div><div class="modal"></div>');
+	game.goodGuys.sort(function(a,b){return a.deathTime - b.deathTime});
+	
+	var modalHtml = '<div class="container" id="leftContainer">';
+	modalHtml += '<div class="messageDiv"><table id="statsTable"><tr><td>Name</td><td>Time</td><td>Kills</td><td>Bullets</td></tr>';
+	
+	for(var i = 0; i < game.goodGuys.length; i++){
+		modalHtml += '<tr><td style="color:'+game.goodGuys[i].color+';">' + game.goodGuys[i].name + '</td><td>' + game.goodGuys[i].deathTime + '</td><td>' + game.goodGuys[i].kills + '</td><td>' + game.goodGuys[i].numBullets + '</td></tr>';
+	}
+	
+	modalHtml += '</table></div></div>';
+	
 	if(myPlayer.host){
-		var modalHtml = '<div id="overlay"></div><div class="modal"><p class="huge center">Game Over</p><div class="container"><div class="messageDiv">Your team lasted '+ game.secs +' seconds. </div><div class="messageDiv" id="hostStatus">Would you like to host another game?<br/><br/><button class="startGameButton hostButtonFocus" onclick="hostAgain()">Host</button></div></div><div class="container" id="newPlayerList"></div></div>';
+		modalHtml += '<div class="container" id="rightContainer"><div class="messageDiv" id="hostStatus">Would you like to host another game?<br/><br/><button class="startGameButton hostButtonFocus" onclick="hostAgain()">Host</button></div>';
 	}
 	else{
-		var modalHtml = '<div id="overlay"></div><div class="modal"><p class="huge center">Game Over</p><div class="container"><div class="messageDiv">Your team lasted '+ game.secs +' seconds.</div><div class="messageDiv" id="hostStatus">Waiting for host to join again.</div></div><div class="container" id="newPlayerList"></div></div>';
+		modalHtml += '<div class="container" id="rightContainer"><div class="messageDiv" id="hostStatus">Waiting for host to join again.</div>';
 	}
-	$('body').append(modalHtml);
-	console.log(game);
+	
+	modalHtml += '<div class="messageDiv" id="newPlayerList"></div></div>';
+	$('.modal').html(modalHtml);
+	$('#newPlayerList').hide();
 });
 
 socket.on('newJoinee', function(players){
 	if($('#newPlayerList').length){
+		$('#newPlayerList').show();
+		
 		if(myPlayer.host){
-			$('#hostStatus').html('You are the host of this game. This key will allow friends to join your game. Start the game when all paleontologists have joined. <br/><br/><p class="heading">Key: '+ myPlayer.gameID +'</p><button class="startGameButton startButtonFocus" onclick="startGame()" id="startButton">Start Game</button>');
+			$('#hostStatus').html('Start the game when all paleontologists have joined. <br/><br/><p class="heading">Key: '+ myPlayer.gameID +'</p><button class="startGameButton startButtonFocus" onclick="startGame()" id="startButton">Start Game</button>');
 		}
 		else{
 			$('#hostStatus').html('Host wants to play another game. Would you like to join? <br/><br/><button class="startGameButton joinButtonFocus" onclick="joinAgain()" id="joinButton">Join</button>');
 		}
 		
-		var newHtml = '<div class="messageDiv"><p class="heading">Paleontologists</p><ul>';
+		var newHtml = '<p class="heading">Paleontologists</p><ul>';
 		for(var i = 0; i < players.length; i++){
 			newHtml += '<li class="bold" style="color:' + players[i].color + ';">' + players[i].name + '</li>';
 		}	
-		newHtml += '</ul></div>';
+		newHtml += '</ul>';
 		$('#newPlayerList').html(newHtml);
-		
 	}else{
 		menu.width(window.innerWidth * .6).hide();
 		menu.height(window.innerHeight - $('#header').height());
@@ -225,10 +247,16 @@ socket.on('hostDisconnect', function(){
 $(document).keydown(function(e){
 	if(e.which == 13){
 		if($('.hostButtonFocus').length){
-			host();
+			if($('.modal').length)
+				hostAgain();
+			else
+				host();
 		}
 		else if($('.joinButtonFocus').length){
-			join();
+			if($('.modal').length)
+				joinAgain();
+			else
+				join();
 		}
 		else if($('.startButtonFocus').length){
 			startGame();

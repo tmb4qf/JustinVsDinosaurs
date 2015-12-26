@@ -134,12 +134,15 @@ ul{
     width: 700px;
     height: 500px;
 	padding: 20px;
+	padding-top: 100px;
     position: fixed;
     top: 50%; 
     left: 50%;
     margin-top: -260px;
     margin-left: -310px;
-    background-color: #7F4E2D;
+    background: url("../images/GAME_OVER.png") no-repeat;
+	background-size: 100%;
+	background-color: cover;
     border-radius: 20px;
     text-align: center;
     z-index: 3;
@@ -149,16 +152,33 @@ ul{
 	float: left;
 }
 
+#leftContainer{
+	width: 50%;
+}
+
+#rightContainer{
+	width: 50%;
+	font-size: 90%;
+}
+
 .messageDiv{
-	width: 300px;
+	width: 90%;
 	font-size: 20px;
 	color: white;
 	font-family: monospace;
-	border: 2px solid white;
 	border-radius: 10px;
-	background-color: #5A1D0E;
+	background-color: rgba(90,29,14,.7);
 	padding: 10px;
 	margin: 10px;
 	margin-top: 30px;
-	box-shadow: 8px 8px 3px #45160A;
+	box-shadow: 10px 10px 5px #260C05;
+}
+
+table{
+	margin: 0 auto;
+}
+
+td{
+	font-weight: bold;
+	padding: 0px 7px;
 }
