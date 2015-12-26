@@ -7,7 +7,8 @@ var constant = {
 	bulletSpeed : 15,
 	width: 1200,
 	height: 700,
-	reestablishTargetFrequency: 30
+	reestablishTargetFrequency: 30,
+	frameLength: 12
 };
 
 var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4, NONE: 5};
@@ -15,7 +16,8 @@ var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4, NONE: 5};
 function Game(key)
 {
 	this.secs = 0;
-	this.framesThisWave = 0;
+	this.wave = 1;
+	this.framesThisWave = 1;
 	this.key = key;
 	this.players = [];
 	this.badGuys = [];

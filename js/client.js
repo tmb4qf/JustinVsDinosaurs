@@ -16,7 +16,8 @@ var constant = {
 	badGuyBorder: '#FF1414',
 	bulletColor: '#F2F2F2',
 	width: 1200,
-	height: 700
+	height: 700,
+	frameLength: 12
 };
 
 var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4, NONE: 5};
@@ -183,7 +184,7 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	ctx.fillStyle = "white";
 	ctx.textAlign = "right";
 	ctx.fillText("Total Time: " + secs + " secs.", canvasWidth - 10, 20);
-	ctx.fillText("Next Wave: " + (10 - (secs % 10)) + " secs.", canvasWidth - 10, 40);
+	ctx.fillText("Next Wave: " + (constant.frameLength - (secs % constant.frameLength)) + " secs.", canvasWidth - 10, 40);
 });
 
 socket.on('gameOver', function(game){

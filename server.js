@@ -196,9 +196,10 @@ var gameLoop = setInterval(function(){
 		}
 		
 		game.framesThisWave++;
-		if(game.framesThisWave == constant.frameRate * 10){
+		if(game.framesThisWave == constant.frameRate * constant.frameLength){
 			game.framesThisWave = 0;
-			game.createBadGuys(game.secs/2 + 5);
+			game.wave++;
+			game.createBadGuys(game.wave * 5);
 		}
 		
 		if(game.framesThisWave % constant.frameRate == 0){
