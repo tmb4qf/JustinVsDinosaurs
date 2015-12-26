@@ -145,6 +145,7 @@ io.on('connection', function(socket){
 		game.createBadGuys(5);
 		game.secs = 0;
 		game.framesThisWave = 0;
+		game.wave = 1;
 
 		myPlayer.index = 0;
 		game.players.push(myPlayer);

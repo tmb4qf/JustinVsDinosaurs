@@ -133,15 +133,15 @@ Game.prototype.updateBadGuys = function()
 			
 		if(deltaX < 3 || (rand > .5 && deltaY > 3)){
 			if(badGuy.y < goodGuy.y)
-				badGuy.y += badGuy.speed;//constant.badGuySpeed;
+				badGuy.y += badGuy.speed;
 			else
-				badGuy.y -= badGuy.speed;//constant.badGuySpeed;
+				badGuy.y -= badGuy.speed;
 		}
 		else{
 			if(badGuy.x < goodGuy.x)
-				badGuy.x += badGuy.speed;//constant.badGuySpeed;
+				badGuy.x += badGuy.speed;
 			else
-				badGuy.x -= badGuy.speed;//constant.badGuySpeed;
+				badGuy.x -= badGuy.speed;
 		}
 		
 	}
