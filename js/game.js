@@ -25,7 +25,7 @@ function Game(key)
 	this.numAlive;
 	
 	this.colorID = 0;
-	this.colors = ['#0000CC', '#FF0000', '#FFFF00', '#00CC00', '#FF9900', '#FFFFFF', '#CC00FF', '#00FFFF', '#FF6699', '#6200FF'];
+	this.colors = ['#0008FF', '#FF1919', '#FFFF1F', '#00D100', '#FF9900', '#00FFFF', '#007504', '#E100FF', '#FF8FB4', '#828174'];
 	
 	this.createBadGuys(5);
 }
