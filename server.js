@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
+var fs = require('fs');
 var core = require('./js/game.js');
 var constant = core.constants;
 var dir = {UP: 1, RIGHT: 2, DOWN: 3, LEFT: 4, NONE: 5};
@@ -190,6 +191,8 @@ var gameLoop = setInterval(function(){
 			io.to(game.key).emit('gameOver', game);
 			len--;
 			i--;
+			var options = {encoding: 'utf8', flag: 'a'};
+			fs.writeFile('data/players.txt', 'Seconds: ' + game.secs + ' \n' + JSON.stringify(game.goodGuys) + '\n\n', options);
 		}
 		
 		game.framesThisWave++;
