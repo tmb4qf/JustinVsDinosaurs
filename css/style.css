@@ -97,7 +97,7 @@ img{
 
 .bold{
 	font-weight: 900;
-	font-size: 110%;
+	font-size: 120%;
 }
 
 ul{
@@ -181,4 +181,32 @@ table{
 td{
 	font-weight: bold;
 	padding: 0px 7px;
+}
+
+#howToPlay{
+	width: 90%;
+	border: 2px solid white;
+}
+
+.textCenter{
+	text-align: center;
+	color: white;
+	font-size: 130%;
+	font-family: monospace;
+}
+
+.inline{
+	display: inline;
+}
+
+.absolute{
+	position: absolute;
+	top: 20px;
+	left: 20px;
+}
+
+.absoluteWithHeader{
+	position: absolute;
+	bottom: 20px;
+	left: 20px;
 }

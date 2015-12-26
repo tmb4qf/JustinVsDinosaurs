@@ -49,14 +49,14 @@ socket.on('invalidKey', function(){
 	if($('.error').length)
 		$('.error').html('This key is invalid. Please try again.');
 	else
-		menu.append('<div class="error">This key is invalid. Please try again.</div>');
+		$('#menu').append('<div class="error">This key is invalid. Please try again.</div>');
 });
 
 socket.on('inPlayError', function(){
 	if($('.error').length)
 		$('.error').html('This game is currently in play. Please wait until game is over and try again.');
 	else
-		menu.append('<div class="error">This game is currently in play. Please wait until game is over and try again.</div>');
+		$('#menu').append('<div class="error">This game is currently in play. Please wait until game is over and try again.</div>');
 });
 
 function startGame(){
@@ -229,8 +229,8 @@ socket.on('newJoinee', function(players){
 		newHtml += '</ul>';
 		$('#newPlayerList').html(newHtml);
 	}else{
-		menu.width(window.innerWidth * .6).hide();
-		menu.height(window.innerHeight - $('#header').height());
+		$('#menu').width(window.innerWidth * .6).hide();
+		$('#menu').height(window.innerHeight - $('#header').height());
 		var newHtml = '<div id="instructions" class="panel">';
 		
 		if(myPlayer.host){
@@ -245,7 +245,7 @@ socket.on('newJoinee', function(players){
 			newHtml += '<li class="bold" style="color:' + players[i].color + ';">' + players[i].name + '</li>';
 		}	
 		newHtml += '</ul></div>';
-		menu.html(newHtml).fadeIn(200);		
+		$('#menu').html(newHtml).fadeIn(200);		
 	}
 });
 

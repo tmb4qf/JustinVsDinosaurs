@@ -22,22 +22,28 @@
 		</div>
 	</body>
 	<script>
-		var menu = $('#menu');
 		$('.button').hide();
 		$('#header').hide();
 		
 		$(function(){
+			resizeElements();
+			addEventListeners();
+		});
+		
+		function resizeElements(){
 			var width = window.innerWidth / 4;
 			$('.button').width(width).height(width * .56);
 			$('.buttonImg').width(width).height(width * .56);
 			
 			var totalWidth = $('#rButton').width() + $('#mButton').width() + $('#lButton').width();
-			menu.width(totalWidth);
+			$('#menu').width(totalWidth);
 			
 			$('#header').fadeIn(500, function(){
 				$('.button').show(500);
 			});
-			
+		}
+		
+		function addEventListeners(){
 			$('#rButton').hover(function(){
 				$('#rImg').attr('src', 'images/TRICERATOPS_LEFT_HOVER.png');
 			}, function(){
@@ -58,23 +64,38 @@
 			
 			$('#rButton').click(function(){
 				$('.button').hide(300, function(){
-					var newHtml = '<span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name" autofocus ></input></span>';
+					var newHtml = '<button class="absoluteWithHeader startGameButton" onclick="back()">Back</button><span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name" autofocus ></input></span>';
 					newHtml += '<button id="hostButton" onclick="host()" class="hostButtonFocus">Host</button>';
-					menu.html(newHtml);
-					menu.width($('#nameBox').width() + $('#hostButton').width() + 40);
+					$('#menu').html(newHtml);
+					$('#menu').width($('#nameBox').width() + $('#hostButton').width() + 40);
 				});
 			});
 			$('#mButton').click(function(){
-			
+				$('#header').fadeOut(200);
+				$('.button').hide(100, function(){
+					var newHtml = '<div class="center textCenter"><p class="bold inline">Objective: </p>The dinosaurs are attacking. Your team of paleontologists must prevent their own extinction by shooting dinosaurs. See how long your team can survive!</div><br/>';
+					newHtml += '<div class="center textCenter"><p class="bold inline">To Start: </p>Single Player: Use the "Host a Game" button to start.<br/>Multiple Players: One player will "Host a Game", the others will "Join a Game" using a unique game key from their host.</div><br/><br/>';
+					newHtml += '<button class="absolute startGameButton" onclick="back()">Back</button><img src="images/HOW_TO_PLAY.png" id="howToPlay"></img>';
+					
+					$('#menu').html(newHtml);
+					$('#menu').width($('#nameBox').width() + $('#howToPlay').width() + 40);
+				});
 			});
 			$('#lButton').click(function(){
 				$('.button').hide(300, function(){
-					var newHtml = '<span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name" autofocus></input><br/><input class="input" type="text" id="key" size=7 maxlength=5 autocomplete="off" placeholder="Game Key" ></input></span>';
+					var newHtml = '<button class="absoluteWithHeader startGameButton" onclick="back()">Back</button><span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name" autofocus></input><br/><input class="input" type="text" id="key" size=7 maxlength=5 autocomplete="off" placeholder="Game Key" ></input></span>';
 					newHtml += '<button id="hostButton" onclick="join()" class="joinButtonFocus">Join</button>';
-					menu.html(newHtml);
-					menu.width($('#nameBox').width() + $('#hostButton').width() + 40);
+					$('#menu').html(newHtml);
+					$('#menu').width($('#nameBox').width() + $('#hostButton').width() + 40);
 				});
 			});
-		});
+		}
+		
+		function back(){
+			var homeHtml = '<img src="images/header.png" id="header"></img><div id="menu"><div class="button" id="rButton"><img src="images/TRICERATOPS_LEFT.png" class="buttonImg" id="rImg"></img></div><div class="button" id="mButton"><img src="images/PTERODACTYL.png" class="buttonImg" id="mImg"></img></div><div class="button" id="lButton"><img src="images/TRICERATOPS_RIGHT.png" class="buttonImg" id="lImg"></img></div></div>';
+			$('body').html(homeHtml);
+			resizeElements();
+			addEventListeners();
+		}
 	</script>
 </html>

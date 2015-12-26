@@ -182,7 +182,7 @@ Game.prototype.updateBullets = function()
 		for(var j=0; j<this.badGuys.length; j++)
 		{
 			var badGuy = this.badGuys[j];
-			if(Math.abs(bullet.x - badGuy.x) < constant.badGuySize && Math.abs(bullet.y - badGuy.y) < constant.badGuySize)
+			if(Math.abs(bullet.x - badGuy.x) < (constant.badGuySize + constant.bulletSize) && Math.abs(bullet.y - badGuy.y) < (constant.badGuySize + constant.bulletSize))
 			{
 				this.bullets.splice(i,1);
 
