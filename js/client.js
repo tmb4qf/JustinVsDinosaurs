@@ -12,8 +12,6 @@ var constant = {
 	goodGuySize: 15,
 	badGuySize: 8,
 	bulletSize: 4,
-	badGuyColor: '#FB4848',
-	badGuyBorder: '#FF1414',
 	bulletColor: '#F2F2F2',
 	width: 1200,
 	height: 700,
@@ -68,6 +66,7 @@ function startGame(){
 
 function hostAgain(){
 	if(myPlayer.host){
+		$('#hostStatus').remove();
 		socket.emit('hostAgain', myPlayer.gameID);
 	}
 }
@@ -139,11 +138,11 @@ socket.on('frame', function(goodGuys, badGuys, bullets, secs){
 	ctx.fillStyle = constant.badGuyColor;
 	var badGuyLen = badGuys.length;
 	for(i = 0; i < badGuyLen; i++){
-		if(badGuys[i].speed == 2.75)
+		if(badGuys[i].speed == 2.5)
 			ctx.fillStyle = '#FF9696';
 		else if(badGuys[i].speed == 3)
-			ctx.fillStyle = constant.badGuyColor;
-		else if (badGuys[i].speed == 3.25)
+			ctx.fillStyle = '#FB4848';
+		else if (badGuys[i].speed == 3.5)
 			ctx.fillStyle = '#FF1212';
 		
 		ctx.beginPath();
@@ -217,7 +216,12 @@ socket.on('newJoinee', function(players){
 		$('#newPlayerList').show();
 		
 		if(myPlayer.host){
-			$('#hostStatus').html('Start the game when all paleontologists have joined. <br/><br/><p class="heading">Key: '+ myPlayer.gameID +'</p><button class="startGameButton startButtonFocus" onclick="startGame()" id="startButton">Start Game</button>');
+			if($('#hostStatus').length){
+				$('#hostStatus').html('Would you like to host another game?<br/><br/><button class="startGameButton hostButtonFocus" onclick="hostAgain()">Host</button>');
+			}
+			else{
+				$('#rightContainer').html('<div class="messageDiv"><p class="heading">Key: '+ myPlayer.gameID +'</p><button class="startGameButton startButtonFocus" onclick="startGame()" id="startButton">Start Game</button></div><div class="messageDiv" id="newPlayerList"></div>');
+			}
 		}
 		else{
 			$('#hostStatus').html('Host wants to play another game. Would you like to join? <br/><br/><button class="startGameButton joinButtonFocus" onclick="joinAgain()" id="joinButton">Join</button>');
@@ -251,7 +255,14 @@ socket.on('newJoinee', function(players){
 });
 
 socket.on('hostDisconnect', function(){
-	$('#hostStatus').html('Host has left the game.');
+	if($('#newPlayerList').length){
+		$('#hostStatus').html('Host has left the game.');
+		$('#newPlayerList').remove();
+	}
+	else{
+		$('#instructions').html('Host has left the game.');
+		$('#playerList').remove();
+	}
 });
 
 $(document).keydown(function(e){

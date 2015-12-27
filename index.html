@@ -64,7 +64,7 @@
 			
 			$('#rButton').click(function(){
 				$('.button').hide(300, function(){
-					var newHtml = '<button class="absoluteWithHeader startGameButton" onclick="back()">Back</button><span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name" autofocus ></input></span>';
+					var newHtml = '<button class="absoluteWithHeader startGameButton" onclick="back()">Back</button><span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=10 autocomplete="off" placeholder="Name" autofocus ></input></span>';
 					newHtml += '<button id="hostButton" onclick="host()" class="hostButtonFocus">Host</button>';
 					$('#menu').html(newHtml);
 					$('#menu').width($('#nameBox').width() + $('#hostButton').width() + 40);
@@ -83,7 +83,7 @@
 			});
 			$('#lButton').click(function(){
 				$('.button').hide(300, function(){
-					var newHtml = '<button class="absoluteWithHeader startGameButton" onclick="back()">Back</button><span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=15 autocomplete="off" placeholder="Name" autofocus></input><br/><input class="input" type="text" id="key" size=7 maxlength=5 autocomplete="off" placeholder="Game Key" ></input></span>';
+					var newHtml = '<button class="absoluteWithHeader startGameButton" onclick="back()">Back</button><span id="nameBox"><input class="input" type="text" id="name" size=7 maxlength=10 autocomplete="off" placeholder="Name" autofocus></input><br/><input class="input" type="text" id="key" size=7 maxlength=5 autocomplete="off" placeholder="Game Key" ></input></span>';
 					newHtml += '<button id="hostButton" onclick="join()" class="joinButtonFocus">Join</button>';
 					$('#menu').html(newHtml);
 					$('#menu').width($('#nameBox').width() + $('#hostButton').width() + 40);

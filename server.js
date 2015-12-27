@@ -138,16 +138,8 @@ io.on('connection', function(socket){
 	
 	socket.on('hostAgain', function(key){
 		var game = findGame(key);
-		game.goodGuys = [];
-		game.players = [];
-		game.badGuys = [];
-		game.bullets = [];
-		game.createBadGuys(5);
-		game.secs = 0;
-		game.framesThisWave = 0;
-		game.wave = 1;
 
-		myPlayer.index = 0;
+		myPlayer.index = game.players.length;
 		game.players.push(myPlayer);
 		var newGoodGuy = new core.GoodGuy(myPlayer.color, myPlayer.name);
 		game.goodGuys.push(newGoodGuy);
@@ -194,6 +186,8 @@ var gameLoop = setInterval(function(){
 			i--;
 			var options = {encoding: 'utf8', flag: 'a'};
 			fs.writeFile('data/players.txt', 'Seconds: ' + game.secs + ' \n' + JSON.stringify(game.goodGuys) + '\n\n', options);
+			
+			resetGame(game);
 		}
 		
 		game.framesThisWave++;
@@ -216,6 +210,17 @@ var gameLoop = setInterval(function(){
 		io.to(game.key).emit('frame', game.goodGuys, game.badGuys, game.bullets, game.secs);
 	}
 }, 1000/constant.frameRate);
+
+function resetGame(game){
+	game.goodGuys = [];
+	game.players = [];
+	game.badGuys = [];
+	game.bullets = [];
+	game.createBadGuys(5);
+	game.secs = 0;
+	game.framesThisWave = 0;
+	game.wave = 1;
+}
 
 function findGame(gameID){
 	var len = games.length;

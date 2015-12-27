@@ -26,7 +26,7 @@ function Game(key)
 	this.numAlive;
 	
 	this.colorID = 0;
-	this.colors = ['#0008FF', '#FF1919', '#FFFF1F', '#00D100', '#FF9900', '#00FFFF', '#007504', '#E100FF', '#FF8FB4', '#828174'];
+	this.colors = ['#0008FF', '#CC0000', '#FFFF1F', '#00D100', '#FF9900', '#00FFFF', '#007504', '#E100FF', '#FF8FB4', '#828174'];
 	
 	this.createBadGuys(5);
 }
@@ -223,7 +223,7 @@ function BadGuy(x,y)
 	this.x = x;
 	this.y = y;
 	this.target;
-	this.speed = 3 + (Math.floor(Math.random() * 3) - 1) * .25;
+	this.speed = 3 + (Math.floor(Math.random() * 3) - 1) * .5;
 }
 
 function Bullet(x,y,dir, source)
